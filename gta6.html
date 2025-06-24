@@ -1,0 +1,283 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Islamic App</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    * { box-sizing: border-box; font-family: 'Georgia', serif; }
+    body {
+      margin: 0;
+      background: linear-gradient(120deg, #222, #111);
+      color: white;
+      height: 100vh;
+      overflow: hidden;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    .screen {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      height: 100vh;
+      width: 100vw;
+      overflow-y: auto;
+    }
+    .active { display: flex; }
+
+    .fancy-text {
+      font-size: 2em;
+      font-family: "Brush Script MT", cursive;
+      margin-bottom: 20px;
+    }
+
+    button {
+      padding: 15px 25px;
+      margin: 10px;
+      font-size: 1.3em;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      background: #0f0;
+      color: black;
+      font-weight: bold;
+      transition: 0.3s;
+    }
+
+    button:hover { transform: scale(1.05); }
+
+    .box {
+      background: rgba(255, 255, 255, 0.1);
+      padding: 20px;
+      border-radius: 12px;
+      margin: 15px 0;
+      width: 90%;
+      max-width: 600px;
+      line-height: 1.6;
+      font-size: 1.1em;
+    }
+
+    .box .ar { font-size: 1.3em; font-weight: bold; direction: rtl; }
+    .box .en { margin-top: 8px; font-style: italic; }
+
+    input, .display {
+      width: 90%;
+      padding: 15px;
+      font-size: 1.4em;
+      text-align: right;
+      border-radius: 10px;
+      margin: 10px auto;
+      border: none;
+      background: #fff;
+      color: black;
+      font-family: 'Courier New', monospace;
+    }
+
+    .keypad {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+      margin: 20px;
+    }
+
+    .keypad button {
+      background: #333;
+      color: #fff;
+      font-size: 1.4em;
+      padding: 20px;
+    }
+
+    .small-btns {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+  </style>
+</head>
+<body>
+
+<!-- 🌟 HOME -->
+<div id="home" class="screen active">
+  <div class="fancy-text">🌙 Islamic Multi-App</div>
+  <button onclick="showScreen('calculator')">🧮 Calculator</button>
+  <button onclick="showScreen('timerSelect')">⏱ Timer & Stopwatch</button>
+  <button onclick="showScreen('quranMenu')">📖 Quran</button>
+</div>
+
+<!-- 🧮 CALCULATOR -->
+<div id="calculator" class="screen">
+  <div class="fancy-text">Elegant Calculator</div>
+  <div class="display" id="calcDisplay">0</div>
+  <div class="keypad">
+    <button onclick="appendCalc('7')">7</button>
+    <button onclick="appendCalc('8')">8</button>
+    <button onclick="appendCalc('9')">9</button>
+    <button onclick="appendCalc('/')">÷</button>
+    <button onclick="appendCalc('4')">4</button>
+    <button onclick="appendCalc('5')">5</button>
+    <button onclick="appendCalc('6')">6</button>
+    <button onclick="appendCalc('*')">×</button>
+    <button onclick="appendCalc('1')">1</button>
+    <button onclick="appendCalc('2')">2</button>
+    <button onclick="appendCalc('3')">3</button>
+    <button onclick="appendCalc('-')">−</button>
+    <button onclick="appendCalc('0')">0</button>
+    <button onclick="appendCalc('.')">.</button>
+    <button onclick="calculate()">=</button>
+    <button onclick="appendCalc('+')">+</button>
+  </div>
+  <button onclick="clearCalc()">Clear</button>
+  <button onclick="showScreen('home')">← Home</button>
+</div>
+
+<!-- ⏱ TIMER SELECTION -->
+<div id="timerSelect" class="screen">
+  <div class="fancy-text">Choose</div>
+  <div class="small-btns">
+    <button onclick="showScreen('timer')">⏳ Timer</button>
+    <button onclick="showScreen('stopwatch')">⏱ Stopwatch</button>
+    <button onclick="showScreen('home')">← Home</button>
+  </div>
+</div>
+
+<!-- ⏳ TIMER -->
+<div id="timer" class="screen">
+  <div class="fancy-text">⏳ Timer</div>
+  <input type="number" id="timerInput" placeholder="Enter seconds" />
+  <button onclick="startTimer()">Start</button>
+  <div id="timerDisplay"></div>
+  <button onclick="showScreen('home')">← Home</button>
+</div>
+
+<!-- ⏱ STOPWATCH -->
+<div id="stopwatch" class="screen">
+  <div class="fancy-text">⏱ Stopwatch</div>
+  <div id="stopwatchDisplay">0.0s</div>
+  <button onclick="startStopwatch()">Start</button>
+  <button onclick="stopStopwatch()">Stop</button>
+  <button onclick="resetStopwatch()">Reset</button>
+  <button onclick="showScreen('home')">← Home</button>
+</div>
+
+<!-- 📖 QURAN MENU -->
+<div id="quranMenu" class="screen">
+  <div class="fancy-text">Quran Section</div>
+  <button onclick="showScreen('surahList')">📖 Last 20 Surahs</button>
+  <button onclick="showScreen('hadithList')">🕋 Hadith</button>
+  <button onclick="showScreen('duaList')">🤲 Duas</button>
+  <button onclick="showScreen('home')">← Home</button>
+</div>
+<!-- 📖 SURAH LIST -->
+<div id="surahList" class="screen">
+  <div class="fancy-text">📖 Last 20 Surahs</div>
+  <div class="box">
+    <div class="ar">قُلْ هُوَ ٱللَّهُ أَحَدٌ</div>
+    <div class="en">Say, He is Allah, the One. (Surah Ikhlas)</div>
+  </div>
+  <div class="box">
+    <div class="ar">قُلْ أَعُوذُ بِرَبِّ ٱلْفَلَقِ</div>
+    <div class="en">Say, I seek refuge in the Lord of the daybreak. (Surah Falaq)</div>
+  </div>
+  <button onclick="showScreen('quranMenu')">← Back</button>
+</div>
+
+<!-- 🕋 HADITH LIST -->
+<div id="hadithList" class="screen">
+  <div class="fancy-text">🕋 Hadith</div>
+  <div class="box">
+    <div class="ar">إِنَّمَا الْأَعْمَالُ بِالنِّيَّاتِ</div>
+    <div class="en">Actions are judged by intentions. (Bukhari & Muslim)</div>
+  </div>
+  <div class="box">
+    <div class="ar">مَنْ لَا يَرْحَمْ لَا يُرْحَمْ</div>
+    <div class="en">Whoever does not show mercy will not be shown mercy. (Bukhari)</div>
+  </div>
+  <button onclick="showScreen('quranMenu')">← Back</button>
+</div>
+
+<!-- 🤲 DUA LIST -->
+<div id="duaList" class="screen">
+  <div class="fancy-text">🤲 Duas</div>
+  <div class="box">
+    <div class="ar">رَبِّ ٱغْفِرْ لِي وَلِوَالِدَيَّ</div>
+    <div class="en">My Lord, forgive me and my parents. (14:41)</div>
+  </div>
+  <div class="box">
+    <div class="ar">اللّهُـمَّ أَنْتَ رَبِّـي</div>
+    <div class="en">O Allah, You are my Lord. (Morning Dua)</div>
+  </div>
+  <button onclick="showScreen('quranMenu')">← Back</button>
+</div>
+
+<!-- 💻 JavaScript Logic -->
+<script>
+  function showScreen(id) {
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+  }
+
+  // Calculator
+  let calcStr = '';
+  function appendCalc(val) {
+    if (calcStr === '0') calcStr = '';
+    calcStr += val;
+    document.getElementById('calcDisplay').innerText = calcStr;
+  }
+
+  function calculate() {
+    try {
+      calcStr = eval(calcStr).toString();
+      document.getElementById('calcDisplay').innerText = calcStr;
+    } catch {
+      document.getElementById('calcDisplay').innerText = 'Error';
+      calcStr = '';
+    }
+  }
+
+  function clearCalc() {
+    calcStr = '';
+    document.getElementById('calcDisplay').innerText = '0';
+  }
+
+  // Timer
+  let timerInterval;
+  function startTimer() {
+    clearInterval(timerInterval);
+    let time = parseInt(document.getElementById('timerInput').value);
+    if (isNaN(time) || time <= 0) return;
+    const display = document.getElementById('timerDisplay');
+    timerInterval = setInterval(() => {
+      display.innerText = `${time}s remaining`;
+      time--;
+      if (time < 0) {
+        clearInterval(timerInterval);
+        display.innerText = '⏰ Time up!';
+      }
+    }, 1000);
+  }
+
+  // Stopwatch
+  let swTime = 0, swInterval;
+  function startStopwatch() {
+    clearInterval(swInterval);
+    swInterval = setInterval(() => {
+      swTime += 0.1;
+      document.getElementById('stopwatchDisplay').innerText = swTime.toFixed(1) + 's';
+    }, 100);
+  }
+
+  function stopStopwatch() {
+    clearInterval(swInterval);
+  }
+
+  function resetStopwatch() {
+    swTime = 0;
+    document.getElementById('stopwatchDisplay').innerText = '0.0s';
+  }
+</script>
+
+</body>
+</html>
